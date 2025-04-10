@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using NotificationService.Data;
 using NotificationService.DTOs;
 using NotificationService.Models;
+using NotificationService.RabbitMq;
 using NotificationService.Repositories;
 
 namespace NotificationService.Services;
@@ -9,12 +10,10 @@ namespace NotificationService.Services;
 public class NotificationScheduler :  INotificationScheduler
 {
     private readonly NotificationRepository _repository;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
-
-    public NotificationScheduler(IServiceScopeFactory scopeFactory, NotificationRepository repository)
+    public NotificationScheduler(NotificationRepository repository)
     {
-        _serviceScopeFactory = scopeFactory;
         _repository = repository;
+        
     }
     
     public async Task ScheduleNotification(NotificationCreateDto notification)
