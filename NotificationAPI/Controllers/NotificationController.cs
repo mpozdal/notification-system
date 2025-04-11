@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using NotificationService.DTOs;
-using NotificationService.Models;
-using NotificationService.Services;
+using NotificationAPI.DTOs;
+using NotificationAPI.Models;
+using NotificationAPI.Services;
 
 namespace NotificationService.Controllers;
 
@@ -9,17 +9,17 @@ namespace NotificationService.Controllers;
 [Route("api/[controller]")]
 public class NotificationController: Controller
 {
-    private readonly INotificationScheduler _notificationScheduler;
+    private readonly INotificationSender _notificationSender;
 
-    public NotificationController(INotificationScheduler notificationScheduler)
+    public NotificationController(INotificationSender notificationSender)
     {
-        _notificationScheduler = notificationScheduler;
+        _notificationSender = notificationSender;
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateNotification([FromBody] NotificationCreateDto notification)
     {
-        await _notificationScheduler.ScheduleNotification(notification);
+        await _notificationSender.SendNotification(notification);
         
         return Ok(notification);
     }

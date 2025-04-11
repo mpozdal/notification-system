@@ -1,19 +1,21 @@
 using Microsoft.EntityFrameworkCore;
-using NotificationService.Data;
-using NotificationService.Models;
+using Microsoft.EntityFrameworkCore.Storage;
+using NotificationAPI.Data;
+using NotificationAPI.Models;
 
-namespace NotificationService.Repositories;
+namespace NotificationAPI.Repositories;
 
-public class NotificationRepository
+public class NotificationRepository: INotificationRepository
 {
     private readonly AppDbContext _context;
+    private IDbContextTransaction _transaction;
 
     public NotificationRepository(AppDbContext context)
     {
         _context = context;
     }
     
-    public async Task Create(Notification entity)
+    public async Task AddAsync(Notification entity)
     {
         await _context.Notifications.AddAsync(entity);
         await _context.SaveChangesAsync();
@@ -26,10 +28,28 @@ public class NotificationRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<List<Notification>> GetDueNotificationsAsync()
+    public async Task BeginTransactionAsync()
     {
-        return await  _context.Notifications
-            .Where(n => n.Status == "Scheduled" && n.SendAtUtc <= DateTime.UtcNow)
-            .ToListAsync();
+        _transaction = await _context.Database.BeginTransactionAsync();
+    }
+
+    public async Task CommitTransactionAsync()
+    {
+        try
+        {
+            await _context.SaveChangesAsync();
+            await _transaction.CommitAsync();
+           
+        }
+        finally
+        {
+            await _transaction.DisposeAsync();
+        }
+    }
+
+    public async Task RollbackTransactionAsync()
+    {
+        await _transaction.RollbackAsync();
+        await _transaction.DisposeAsync();
     }
 }

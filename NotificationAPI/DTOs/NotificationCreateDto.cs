@@ -1,4 +1,4 @@
-namespace NotificationService.DTOs;
+namespace NotificationAPI.DTOs;
 
 public class NotificationCreateDto
 {

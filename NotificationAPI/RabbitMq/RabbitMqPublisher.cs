@@ -1,49 +1,106 @@
 using System.Text;
 using System.Text.Json;
-using NotificationService.Models;
+using NotificationAPI.Models;
 using RabbitMQ.Client;
 
-namespace NotificationService.RabbitMq;
+namespace NotificationAPI.RabbitMq;
 
-public class RabbitMqPublisher
+using System.Text;
+using System.Text.Json;
+using RabbitMQ.Client;
+
+public class RabbitMQPublisher : IDisposable
 {
+    private readonly IConnection _connection;
     private readonly IModel _channel;
-    private readonly string _queueName = "notifications";
+    private readonly ILogger<RabbitMQPublisher> _logger;
+    private const string ExchangeName = "notification_events";
 
-    public RabbitMqPublisher(IConfiguration configuration)
+    public RabbitMQPublisher(IConfiguration configuration, ILogger<RabbitMQPublisher> logger)
     {
+        _logger = logger;
+        
         var factory = new ConnectionFactory()
         {
-            HostName = configuration["RabbitMq:Host"],
-            UserName = "user",
-            Password = "password"
+            HostName = configuration["RabbitMQ:HostName"],
+            UserName = configuration["RabbitMQ:UserName"],
+            Password = configuration["RabbitMQ:Password"],
+            DispatchConsumersAsync = true
         };
 
-        var connection = factory.CreateConnection("notification-service-rabbitmq");
-        _channel = connection.CreateModel();
-
-        _channel.QueueDeclare(
-            queue: _queueName,
+        _connection = factory.CreateConnection();
+        _channel = _connection.CreateModel();
+        _channel.ConfirmSelect();
+        _channel.ExchangeDeclare(
+            exchange: ExchangeName,
+            type: ExchangeType.Topic,
             durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null);
+            autoDelete: false);
+        
+        _logger.LogInformation("Connected to RabbitMQ");
     }
 
-    public void PublishNotification(Notification notification)
+    public void PublishNotificationScheduled(Notification notification)
     {
-        var json = JsonSerializer.Serialize(notification);
-        var body = Encoding.UTF8.GetBytes(json);
-        
-        var props = _channel.CreateBasicProperties();
-        props.Persistent = true;
-        
-        _channel.BasicPublish(
-            exchange: "",
-            routingKey: _queueName,
-            basicProperties: props,
-            body: body);
+        var message = new
+        {
+            NotificationId = notification.Id,
+            Channel = notification.Channel,
+            ScheduledAt = notification.SendAtUtc,
+            Timezone = notification.TimeZone
+        };
 
-        Console.WriteLine($"[x] Published notification to queue '{_queueName}': {json}");
+        PublishMessage(message, "notification.scheduled");
+        if (_channel.WaitForConfirms(TimeSpan.FromSeconds(5)))
+        {
+            _logger.LogInformation("Message confirmed by RabbitMQ");
+        }
+        else
+        {
+            _logger.LogWarning("Message not confirmed by RabbitMQ");
+            throw new Exception("Broker confirmation timeout");
+        }
+    }
+
+    public void PublishNotificationUpdated(Guid notificationId, DateTime newScheduledAt)
+    {
+        var message = new
+        {
+            NotificationId = notificationId,
+            NewScheduledAt = newScheduledAt
+        };
+
+        PublishMessage(message, "notification.updated");
+    }
+
+    private void PublishMessage(object message, string routingKey)
+    {
+        try
+        {
+            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+            
+            var properties = _channel.CreateBasicProperties();
+            properties.Persistent = true; // Wiadomość przetrwa restart RabbitMQ
+            
+            _channel.BasicPublish(
+                exchange: ExchangeName,
+                routingKey: routingKey,
+                basicProperties: properties,
+                body: body);
+            
+            _logger.LogInformation("Published message with routing key {RoutingKey}", routingKey);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error publishing message to RabbitMQ");
+            throw;
+        }
+    }
+
+    public void Dispose()
+    {
+        _channel?.Close();
+        _connection?.Close();
+        _logger.LogInformation("Disconnected from RabbitMQ");
     }
 }

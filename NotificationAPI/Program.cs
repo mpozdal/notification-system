@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using NotificationService.Data;
-using NotificationService.Models;
-using NotificationService.RabbitMq;
-using NotificationService.Repositories;
-using NotificationService.Services;
-using NotificationService.Workers;
+using NotificationAPI.Data;
+using NotificationAPI.Models;
+using NotificationAPI.RabbitMq;
+using NotificationAPI.Repositories;
+using NotificationAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,17 +12,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-builder.Services.AddSingleton<RabbitMqPublisher>();
+builder.Services.AddSingleton<RabbitMQPublisher>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
-builder.Services.AddScoped<NotificationRepository, NotificationRepository>();
-builder.Services.AddScoped<INotificationScheduler, NotificationScheduler>();
-
-builder.Services.AddHostedService<NotificationDeliveryService>();
-
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationSender, NotificationSender>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
