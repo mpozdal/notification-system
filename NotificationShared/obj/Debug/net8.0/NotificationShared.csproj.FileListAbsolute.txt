@@ -1,0 +1,15 @@
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/bin/Debug/net8.0/NotificationShared
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/bin/Debug/net8.0/NotificationShared.deps.json
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/bin/Debug/net8.0/NotificationShared.runtimeconfig.json
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/bin/Debug/net8.0/NotificationShared.dll
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/bin/Debug/net8.0/NotificationShared.pdb
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/NotificationShared.GeneratedMSBuildEditorConfig.editorconfig
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/NotificationShared.AssemblyInfoInputs.cache
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/NotificationShared.AssemblyInfo.cs
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/NotificationShared.csproj.CoreCompileInputs.cache
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/NotificationShared.sourcelink.json
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/NotificationShared.dll
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/refint/NotificationShared.dll
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/NotificationShared.pdb
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/NotificationShared.genruntimeconfig.cache
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/obj/Debug/net8.0/ref/NotificationShared.dll
