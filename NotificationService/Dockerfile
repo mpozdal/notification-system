@@ -1,21 +1,17 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
-USER $APP_UID
-WORKDIR /app
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["NotificationService/NotificationService.csproj", "NotificationService/"]
-RUN dotnet restore "NotificationService/NotificationService.csproj"
-COPY . .
-WORKDIR "/src/NotificationService"
-RUN dotnet build "NotificationService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "NotificationService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+COPY NotificationService/*.csproj ./NotificationService/
+WORKDIR /src/NotificationService
 
-FROM base AS final
+RUN dotnet restore
+
+COPY NotificationService/. ./ 
+RUN dotnet publish -c Release -o /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=publish /app/publish .
+
+COPY --from=build /app ./
+
 ENTRYPOINT ["dotnet", "NotificationService.dll"]
