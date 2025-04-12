@@ -5,6 +5,7 @@ using NotificationService.Interfaces;
 using NotificationService.RabbitMq;
 using NotificationService.Repositories;
 using NotificationShared.Enums;
+using NotificationShared.Events;
 
 
 namespace NotificationService.Services;
@@ -55,15 +56,24 @@ public class NotificationDispatcher : BackgroundService
                     if (success)
                     {
                         await repo.UpdateStatusAsync(notification.NotificationId, NotificationStatus.Sent);
+                        _rabbitMqPublisher.PublishStatus(new NotificationChangedStatusEvent()
+                        {
+                            Id = notification.NotificationId,
+                            NewStatus = NotificationStatus.Sent
+                        });
                         _logger.LogInformation("Notification {Id} dispatched successfully", notification.NotificationId);
                     }
                     else
                     {
-                        //await repo.IncrementAttemptAsync(notification.NotificationId);
-                        
                         if (attempts + 1 >= MaxAttempts)
                         {
+                            
                             await repo.UpdateStatusAsync(notification.NotificationId, NotificationStatus.Failed);
+                            _rabbitMqPublisher.PublishStatus(new NotificationChangedStatusEvent()
+                            {
+                                Id = notification.NotificationId,
+                                NewStatus = NotificationStatus.Failed
+                            });
                             _logger.LogWarning("Notification {Id} marked as Failed after 3 attempts", notification.NotificationId);
                         }
                         else

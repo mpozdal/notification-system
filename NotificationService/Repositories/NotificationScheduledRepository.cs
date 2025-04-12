@@ -28,9 +28,9 @@ public class NotificationScheduledRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<NotificationScheduled?> GetAsync(string notificationId)
+    public async Task<NotificationScheduled?> GetAsync(Guid notificationId)
     {
-        return await _context.NotificationScheduled.FindAsync(notificationId);
+        return await _context.NotificationScheduled.FirstOrDefaultAsync(n => n.NotificationId == notificationId);
     }
     public async Task UpdateStatusAsync(Guid notificationId, NotificationStatus status)
     {
@@ -62,7 +62,7 @@ public class NotificationScheduledRepository
     public async Task<List<NotificationScheduled>> GetReadyNotificationsAsync(DateTime nowUtc)
     {
         return await _context.NotificationScheduled.Where(n =>
-            n.ScheduledAtUtc < nowUtc && n.Status == NotificationStatus.Scheduled).ToListAsync();
+            (n.ScheduledAtUtc < nowUtc && n.Status == NotificationStatus.Scheduled) || (n.ForceSend && n.Status == NotificationStatus.Scheduled)).ToListAsync();
     }
 
     public async Task IncrementAttemptAsync(Guid notificationId)

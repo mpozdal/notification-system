@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json;
 using NotificationService.Interfaces;
+using NotificationShared.Enums;
+using NotificationShared.Events;
 using NotificationShared.Models;
 using RabbitMQ.Client;
 namespace NotificationService.RabbitMq;
@@ -64,6 +66,29 @@ public class RabbitMqPublisher: IDisposable
         }
     }
 
+    public void PublishStatus(NotificationChangedStatusEvent notificationStatus)
+    {
+        try
+        {
+            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(notificationStatus));
+            var props = _channel.CreateBasicProperties();
+            props.Persistent = true;
+
+            _channel.BasicPublish(
+                exchange: "notification.events",
+                routingKey: "notification.status",
+                basicProperties: props,
+                body: body);
+
+            _logger.LogInformation("Published message to {RoutingKey}", "notification.status");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error publishing message to {RoutingKey}", "notification.status");
+            throw;
+        }
+    }
+
     private void Publish(object message, string routingKey)
     {
         try
@@ -71,6 +96,7 @@ public class RabbitMqPublisher: IDisposable
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
             var props = _channel.CreateBasicProperties();
             props.Persistent = true;
+            
 
             _channel.BasicPublish(
                 exchange: ExchangeName,

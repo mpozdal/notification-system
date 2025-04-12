@@ -13,15 +13,17 @@ public class RabbitEventProcessor : IRabbitEventProcesser
     private readonly IServiceProvider _services;
     private readonly TimeConverter _converter;
     private readonly ILogger<RabbitEventProcessor> _logger;
+    private readonly RabbitMqPublisher _publisher;
 
     public RabbitEventProcessor(
         IServiceProvider services, 
         TimeConverter converter,
-        ILogger<RabbitEventProcessor> logger)
+        ILogger<RabbitEventProcessor> logger, RabbitMqPublisher publisher)
     {
         _services = services;
         _converter = converter;
         _logger = logger;
+        _publisher = publisher;
     }
 
     public async Task ProcessMessageAsync(string routingKey, string message)
@@ -34,12 +36,12 @@ public class RabbitEventProcessor : IRabbitEventProcesser
 
             switch (routingKey)
             {
-                case "notification.scheduled":
-                    @event = JsonSerializer.Deserialize<Notification>(message);
+                case "notification.created":
+                    @event = JsonSerializer.Deserialize<NotificationCreatedEvent>(message);
                     if (@event != null)
                     {
                         _logger.LogInformation("Processing scheduled notification: {Notification}", message);
-                        await HandleScheduledAsync((Notification)@event);
+                        await HandleScheduledAsync((NotificationCreatedEvent)@event);
                     }
                     break;
                 case "notification.canceled":
@@ -70,7 +72,7 @@ public class RabbitEventProcessor : IRabbitEventProcesser
         }
     }
 
-    private async Task HandleScheduledAsync(Notification @event)
+    private async Task HandleScheduledAsync(NotificationCreatedEvent @event)
     {
         await using var scope = _services.CreateAsyncScope();
         var repository = scope.ServiceProvider.GetRequiredService<NotificationScheduledRepository>();
@@ -81,7 +83,7 @@ public class RabbitEventProcessor : IRabbitEventProcesser
 
             var scheduled = new NotificationScheduled
             {
-                NotificationId = @event.Id,
+                NotificationId = @event.NotificationId,
                 Recipient = @event.Recipient,
                 Channel = @event.Channel,
                 ScheduledAtUtc = _converter.ConvertToUtc(@event.ScheduledAt, @event.TimeZone),
@@ -91,13 +93,18 @@ public class RabbitEventProcessor : IRabbitEventProcesser
             };
 
             await repository.AddAsync(scheduled);
+            _publisher.PublishStatus(new NotificationChangedStatusEvent()
+            {
+                Id = @event.NotificationId,
+                NewStatus = NotificationStatus.Scheduled
+            });
             await repository.CommitTransactionAsync();
-            _logger.LogInformation("Adding scheduled notification to database: {NotificationId}", @event.Id);
+            _logger.LogInformation("Adding scheduled notification to database: {NotificationId}", @event.NotificationId);
         }
         catch (Exception ex)
         {
             await repository.RollbackTransactionAsync();
-            _logger.LogError(ex, "Error while handling scheduled notification: {NotificationId}", @event.Id);
+            _logger.LogError(ex, "Error while handling scheduled notification: {NotificationId}", @event.NotificationId);
             throw;
         }
     }
@@ -111,6 +118,11 @@ public class RabbitEventProcessor : IRabbitEventProcesser
         {
             await repository.BeginTransactionAsync();
             await repository.UpdateStatusAsync(@event.Id, NotificationStatus.Cancelled);
+            _publisher.PublishStatus(new NotificationChangedStatusEvent()
+            {
+                Id = @event.Id,
+                NewStatus = NotificationStatus.Cancelled
+            });
             await repository.CommitTransactionAsync();
             _logger.LogInformation("Updating notification to cancelled: {NotificationId}", @event.Id);
         }
@@ -132,6 +144,11 @@ public class RabbitEventProcessor : IRabbitEventProcesser
             await repository.BeginTransactionAsync();
             await repository.UpdateTimeAsync(@event.Id, _converter.ConvertToUtc(@event.NewScheduledAt, @event.NewTimezone));
             await repository.CommitTransactionAsync();
+            _publisher.PublishStatus(new NotificationChangedStatusEvent()
+            {
+                Id = @event.Id,
+                NewStatus = NotificationStatus.Scheduled
+            });
             _logger.LogInformation("Updating notification time: {NotificationId}", @event.Id);
         }
         catch (Exception ex)

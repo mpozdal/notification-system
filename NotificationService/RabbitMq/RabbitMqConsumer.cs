@@ -17,7 +17,8 @@ public class RabbitMqConsumer : BackgroundService
     private readonly IConnection _connection;
     private readonly ILogger<RabbitMqConsumer> _logger;
     private readonly IRabbitEventProcesser _processor;
-    private const string QueueName = "scheduler_queue";
+    private const string QueueName = "notification.queue";
+    private const string ExchangeName = "notification.events";
 
     public RabbitMqConsumer(IConfiguration config, ILogger<RabbitMqConsumer> logger, IRabbitEventProcesser processor)
     {
@@ -35,12 +36,12 @@ public class RabbitMqConsumer : BackgroundService
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
 
-        _channel.ExchangeDeclare("notification_events", ExchangeType.Topic, durable: true);
+        _channel.ExchangeDeclare(ExchangeName, ExchangeType.Topic, durable: true);
         _channel.QueueDeclare(QueueName, durable: true, exclusive: false, autoDelete: false);
 
-        _channel.QueueBind(QueueName, "notification_events", "notification.scheduled");
-        _channel.QueueBind(QueueName, "notification_events", "notification.canceled");
-        _channel.QueueBind(QueueName, "notification_events", "notification.updated");
+        _channel.QueueBind(QueueName, ExchangeName, "notification.created");
+        _channel.QueueBind(QueueName, ExchangeName, "notification.canceled");
+        _channel.QueueBind(QueueName, ExchangeName, "notification.updated");
 
         _logger.LogInformation("Connected to RabbitMQ");
     }

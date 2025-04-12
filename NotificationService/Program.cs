@@ -23,9 +23,9 @@ builder.Services.AddSingleton<IConnection>(sp =>
 });
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddHttpClient();
 
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddSingleton<TimeConverter>();
 builder.Services.AddSingleton<RabbitMqPublisher>();
 builder.Services.AddSingleton<NotificationApiClient>();
