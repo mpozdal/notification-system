@@ -10,7 +10,7 @@ public class Notification
     public string Message { get; init; } = string.Empty;
     public DateTime ScheduledAt { get; init; }
     public string TimeZone { get; init; } = "UTC";
-    public NotificationStatus Status { get; init; } = NotificationStatus.Pending;
+    public NotificationStatus Status { get; set; } = NotificationStatus.Pending;
     public int RetryCount { get; init; } = 0;
     public bool HighPriority { get; init; } = false;
     public bool ForceSend { get; init; } = false;
