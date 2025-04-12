@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using NotificationAPI.Data;
+using NotificationAPI.DTOs;
 using NotificationShared.Models;
 using NotificationShared.Enums;
 
@@ -29,17 +30,32 @@ public class NotificationRepository: INotificationRepository
         return await _context.Notifications.FirstOrDefaultAsync(n => n.Id == id);
     }
 
-    public async Task CancelAsync(Guid id)
+    public async Task UpdateStatus(Guid id, NotificationStatus status)
     {
-        var toCancel = await _context.Notifications.FirstOrDefaultAsync(n => n.Id == id);
+        var notification = _context.Notifications.FirstOrDefault(n => n.Id == id);
+        if (notification == null)
+            return;
+        notification.Status = status;
+        await _context.SaveChangesAsync();
+    }
 
-        if (toCancel == null)
+    public async Task UpdateNotification(NotificationUpdateDto notification)
+    {
+        var toUpdate = await _context.Notifications.FirstOrDefaultAsync(n => n.Id == notification.Id);
+
+        if (toUpdate == null)
         {
             return;
         }
-        toCancel.Status = NotificationStatus.Cancelled;
+        if(notification.NewDatetime.HasValue)
+            toUpdate.ScheduledAt = notification.NewDatetime.Value;
+        if(notification.NewStatus.HasValue)
+            toUpdate.Status = notification.NewStatus.Value;
+        
         await _context.SaveChangesAsync();
     }
+
+    
 
     public async Task BeginTransactionAsync()
     {

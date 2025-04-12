@@ -33,11 +33,12 @@ public class NotificationController: Controller
         return Ok(notification);
     }
 
-    [HttpPost("{id}/cancel")]
-    public async Task<IActionResult> CancelNotification(Guid id)
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdateNotification([FromBody] NotificationUpdateDto notification)
     {
-        await _service.CancelNotification(id);
+        await _service.UpdateNotification(notification);
         
         return NoContent();
     }
+   
 }

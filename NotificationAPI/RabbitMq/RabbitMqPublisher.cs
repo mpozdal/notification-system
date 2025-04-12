@@ -13,7 +13,7 @@ public class RabbitMQPublisher : IDisposable
     private readonly IConnection _connection;
     private readonly IModel _channel;
     private readonly ILogger<RabbitMQPublisher> _logger;
-    private const string ExchangeName = "notification_events";
+    private const string ExchangeName = "notification.events";
 
     public RabbitMQPublisher(IConfiguration configuration, ILogger<RabbitMQPublisher> logger)
     {
@@ -39,10 +39,10 @@ public class RabbitMQPublisher : IDisposable
         _logger.LogInformation("Connected to RabbitMQ");
     }
 
-    public void PublishNotificationScheduled(Notification notification, string routingKey)
+    public void PublishNotificationScheduled(NotificationCreatedEvent notification)
     {
 
-        PublishMessage(notification, routingKey);
+        PublishMessage(notification, "notification.created");
         if (_channel.WaitForConfirms(TimeSpan.FromSeconds(5)))
         {
             _logger.LogInformation("Message confirmed by RabbitMQ");
@@ -92,7 +92,7 @@ public class RabbitMQPublisher : IDisposable
         }
     }
 
-    public void PublishNotificationUpdated(Notification notification)
+    public void PublishNotificationUpdated(NotificationUpdatedEvent notification)
     {
         PublishMessage(notification, "notification.updated");
 

@@ -38,8 +38,18 @@ public class NotificationSender :  INotificationSender
                 ForceSend = dto.ForceSend
             };
             var createdNotification = await _repository.AddAsync(notificationToAdd);
-            
-            _publisher.PublishNotificationScheduled(notificationToAdd, "notification.scheduled");
+
+            var notificationToPublish = new NotificationCreatedEvent()
+            {
+                NotificationId = createdNotification.Id,
+                Channel = dto.Channel,
+                ScheduledAt = dto.ScheduledAt,
+                TimeZone = dto.TimeZone,
+                HighPriority = dto.HighPriority,
+                ForceSend = dto.ForceSend,
+                Recipient = dto.Recipient,
+            };
+            _publisher.PublishNotificationScheduled(notificationToPublish);
             
             await _repository.CommitTransactionAsync();
             _logger.LogInformation("Notification {Id} created and published", notificationToAdd.Id);
@@ -54,15 +64,31 @@ public class NotificationSender :  INotificationSender
         }
     }
 
-    public async Task CancelNotification(Guid id)
+    public async Task UpdateStatus(Guid id, NotificationStatus status)
     {
         try
         {
             await _repository.BeginTransactionAsync();
-            await _repository.CancelAsync(id);
+            await _repository.UpdateStatus(id, status);
+            await _repository.CommitTransactionAsync();
+            _logger.LogInformation("Notification {Id} with status {Status}", id, status);
+        }
+        catch (Exception ex)
+        {
+            await _repository.RollbackTransactionAsync();
+            _logger.LogError(ex, "Error sending notification");
+        }
+    }
+    public async Task UpdateNotification(NotificationUpdateDto notification)
+    {
+        try
+        {
+            await _repository.BeginTransactionAsync();
+            await _repository.UpdateNotification(notification);
+            
             var toCancel = new NotificationCanceledEvent()
             {
-                Id = id,
+                Id = notification.Id,
             };
             _publisher.PublishNotificationCanceled(toCancel);
             await _repository.CommitTransactionAsync();
@@ -75,10 +101,11 @@ public class NotificationSender :  INotificationSender
             throw;
         }
     }
-
+    
     public async Task<Notification> GetByIdAsync(Guid id)
     {
         return await _repository.GetByIdAsync(id);
+        
     }
     
     
