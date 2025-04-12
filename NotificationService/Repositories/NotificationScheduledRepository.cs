@@ -58,6 +58,21 @@ public class NotificationScheduledRepository
         scheduled.ScheduledAtUtc = time;
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<NotificationScheduled>> GetReadyNotificationsAsync(DateTime nowUtc)
+    {
+        return await _context.NotificationScheduled.Where(n =>
+            n.ScheduledAtUtc < nowUtc && n.Status == NotificationStatus.Scheduled).ToListAsync();
+    }
+
+    public async Task IncrementAttemptAsync(Guid notificationId)
+    {
+        var n = await _context.NotificationScheduled
+            .FirstOrDefaultAsync(n => n.NotificationId == notificationId);
+        n.RetryCount += 1;
+        
+        await _context.SaveChangesAsync();
+    }
     
     public async Task BeginTransactionAsync()
     {

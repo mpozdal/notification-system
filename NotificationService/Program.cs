@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using NotificationService;
 using NotificationService.Data;
+using NotificationService.Http;
+using NotificationService.Interfaces;
+using NotificationService.RabbitMq;
 using NotificationService.Repositories;
 using NotificationService.Services;
 using RabbitMQ.Client;
@@ -20,10 +23,18 @@ builder.Services.AddSingleton<IConnection>(sp =>
 });
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+builder.Services.AddHttpClient();
 
-builder.Services.AddHostedService<NotificationScheduler>();
+builder.Services.AddSingleton<TimeConverter>();
+builder.Services.AddSingleton<RabbitMqPublisher>();
+builder.Services.AddSingleton<NotificationApiClient>();
+builder.Services.AddSingleton<IRabbitEventProcesser, RabbitEventProcessor>();
+
 builder.Services.AddScoped<NotificationScheduledRepository>();
 
+builder.Services.AddHostedService<NotificationDispatcher>();
+builder.Services.AddHostedService<RabbitMqConsumer>();
 
 var host = builder.Build();
 host.Run();
