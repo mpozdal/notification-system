@@ -2326,6 +2326,16 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XDocument.dll": {}
         }
+      },
+      "NotificationShared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/NotificationShared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NotificationShared.dll": {}
+        }
       }
     }
   },
@@ -7434,6 +7444,11 @@
         "system.xml.xdocument.4.3.0.nupkg.sha512",
         "system.xml.xdocument.nuspec"
       ]
+    },
+    "NotificationShared/1.0.0": {
+      "type": "project",
+      "path": "../NotificationShared/NotificationShared.csproj",
+      "msbuildProject": "../NotificationShared/NotificationShared.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -7441,6 +7456,7 @@
       "Microsoft.AspNetCore.OpenApi >= 8.0.13",
       "Microsoft.EntityFrameworkCore >= 8.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.0",
+      "NotificationShared >= 1.0.0",
       "Pomelo.EntityFrameworkCore.MySql >= 8.0.0",
       "Pomelo.EntityFrameworkCore.MySql.Design >= 1.1.2",
       "RabbitMQ.Client >= 6.0.0",
@@ -7471,7 +7487,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/NotificationShared.csproj": {
+              "projectPath": "/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationShared/NotificationShared.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

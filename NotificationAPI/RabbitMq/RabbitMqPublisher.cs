@@ -1,7 +1,6 @@
-using System.Text;
-using System.Text.Json;
-using NotificationAPI.Models;
-using RabbitMQ.Client;
+
+using NotificationShared.Events;
+using NotificationShared.Models;
 
 namespace NotificationAPI.RabbitMq;
 
@@ -19,7 +18,7 @@ public class RabbitMQPublisher : IDisposable
     public RabbitMQPublisher(IConfiguration configuration, ILogger<RabbitMQPublisher> logger)
     {
         _logger = logger;
-        
+
         var factory = new ConnectionFactory()
         {
             HostName = configuration["RabbitMQ:HostName"],
@@ -36,21 +35,14 @@ public class RabbitMQPublisher : IDisposable
             type: ExchangeType.Topic,
             durable: true,
             autoDelete: false);
-        
+
         _logger.LogInformation("Connected to RabbitMQ");
     }
 
-    public void PublishNotificationScheduled(Notification notification)
+    public void PublishNotificationScheduled(Notification notification, string routingKey)
     {
-        var message = new
-        {
-            NotificationId = notification.Id,
-            Channel = notification.Channel,
-            ScheduledAt = notification.SendAtUtc,
-            Timezone = notification.TimeZone
-        };
 
-        PublishMessage(message, "notification.scheduled");
+        PublishMessage(notification, routingKey);
         if (_channel.WaitForConfirms(TimeSpan.FromSeconds(5)))
         {
             _logger.LogInformation("Message confirmed by RabbitMQ");
@@ -62,32 +54,21 @@ public class RabbitMQPublisher : IDisposable
         }
     }
 
-    public void PublishNotificationUpdated(Guid notificationId, DateTime newScheduledAt)
-    {
-        var message = new
-        {
-            NotificationId = notificationId,
-            NewScheduledAt = newScheduledAt
-        };
-
-        PublishMessage(message, "notification.updated");
-    }
-
     private void PublishMessage(object message, string routingKey)
     {
         try
         {
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
-            
+
             var properties = _channel.CreateBasicProperties();
-            properties.Persistent = true; // Wiadomość przetrwa restart RabbitMQ
-            
+            properties.Persistent = true;
+
             _channel.BasicPublish(
                 exchange: ExchangeName,
                 routingKey: routingKey,
                 basicProperties: properties,
                 body: body);
-            
+
             _logger.LogInformation("Published message with routing key {RoutingKey}", routingKey);
         }
         catch (Exception ex)
@@ -96,11 +77,51 @@ public class RabbitMQPublisher : IDisposable
             throw;
         }
     }
+    public  void PublishNotificationCanceled(NotificationCanceledEvent toCancel)
+    {
+        PublishMessage(toCancel, "notification.canceled");
+
+        if (_channel.WaitForConfirms(TimeSpan.FromSeconds(5)))
+        {
+            _logger.LogInformation("Cancellation event confirmed by RabbitMQ");
+        }
+        else
+        {
+            _logger.LogWarning("Cancellation event not confirmed by RabbitMQ");
+            throw new Exception("Broker confirmation timeout");
+        }
+    }
+
+    public void PublishNotificationUpdated(Notification notification)
+    {
+        PublishMessage(notification, "notification.updated");
+
+        if (_channel.WaitForConfirms(TimeSpan.FromSeconds(5)))
+        {
+            _logger.LogInformation("Update event confirmed by RabbitMQ");
+        }
+        else
+        {
+            _logger.LogWarning("Update event not confirmed by RabbitMQ");
+            throw new Exception("Broker confirmation timeout");
+        }
+    }
+
 
     public void Dispose()
     {
-        _channel?.Close();
-        _connection?.Close();
+        if (_channel != null && _channel.IsOpen)
+        {
+            _channel.Close();
+            _logger.LogInformation("Channel closed.");
+        }
+
+        if (_connection != null && _connection.IsOpen)
+        {
+            _connection.Close();
+            _logger.LogInformation("Connection closed.");
+        }
+
         _logger.LogInformation("Disconnected from RabbitMQ");
     }
 }

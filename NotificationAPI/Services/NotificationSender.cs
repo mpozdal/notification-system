@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using NotificationAPI.Data;
 using NotificationAPI.DTOs;
-using NotificationAPI.Models;
+using NotificationShared.Models;
 using NotificationAPI.RabbitMq;
 using NotificationAPI.Repositories;
+using NotificationShared.Enums;
+using NotificationShared.Events;
 
 namespace NotificationAPI.Services;
 
@@ -19,29 +21,29 @@ public class NotificationSender :  INotificationSender
         _logger = logger;
     }
     
-    public async Task SendNotification(NotificationCreateDto notification)
+    public async Task<Notification> SendNotification(NotificationCreateDto dto)
     {
         try
         {
             await _repository.BeginTransactionAsync();
-
-
+            
             var notificationToAdd = new Notification()
             {
-                Id = new Guid(),
-                Recipient = notification.Recipient,
-                Channel = notification.Channel,
-                Message = notification.Message,
-                SendAtUtc = notification.SendAtUtc,
-                Status = "Pending",
-                TimeZone = notification.TimeZone
+                Recipient = dto.Recipient,
+                Channel = dto.Channel,
+                Message = dto.Message,
+                ScheduledAt = dto.ScheduledAt,
+                TimeZone = dto.TimeZone,
+                HighPriority = dto.HighPriority,
+                ForceSend = dto.ForceSend
             };
-            await _repository.AddAsync(notificationToAdd);
+            var createdNotification = await _repository.AddAsync(notificationToAdd);
             
-            _publisher.PublishNotificationScheduled(notificationToAdd);
+            _publisher.PublishNotificationScheduled(notificationToAdd, "notification.scheduled");
             
             await _repository.CommitTransactionAsync();
-            _logger.LogInformation("Notification {Id} created and published", notification.Id);
+            _logger.LogInformation("Notification {Id} created and published", notificationToAdd.Id);
+            return createdNotification;
         }
         catch (Exception ex)
         {
@@ -51,5 +53,35 @@ public class NotificationSender :  INotificationSender
 
         }
     }
+
+    public async Task CancelNotification(Guid id)
+    {
+        try
+        {
+            await _repository.BeginTransactionAsync();
+            await _repository.CancelAsync(id);
+            var toCancel = new NotificationCanceledEvent()
+            {
+                Id = id,
+            };
+            _publisher.PublishNotificationCanceled(toCancel);
+            await _repository.CommitTransactionAsync();
+            
+        }
+        catch (Exception ex)
+        {
+            await _repository.RollbackTransactionAsync();
+            _logger.LogError(ex, "Error cancelling notification");
+            throw;
+        }
+    }
+
+    public async Task<Notification> GetByIdAsync(Guid id)
+    {
+        return await _repository.GetByIdAsync(id);
+    }
+    
+    
+    
 
 }

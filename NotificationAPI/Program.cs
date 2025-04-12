@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using NotificationAPI.Data;
-using NotificationAPI.Models;
 using NotificationAPI.RabbitMq;
 using NotificationAPI.Repositories;
 using NotificationAPI.Services;

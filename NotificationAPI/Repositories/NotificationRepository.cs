@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using NotificationAPI.Data;
-using NotificationAPI.Models;
+using NotificationShared.Models;
+using NotificationShared.Enums;
 
 namespace NotificationAPI.Repositories;
 
@@ -9,22 +10,34 @@ public class NotificationRepository: INotificationRepository
 {
     private readonly AppDbContext _context;
     private IDbContextTransaction _transaction;
+    private INotificationRepository _notificationRepositoryImplementation;
 
     public NotificationRepository(AppDbContext context)
     {
         _context = context;
     }
     
-    public async Task AddAsync(Notification entity)
+    public async Task<Notification> AddAsync(Notification notification)
     {
-        await _context.Notifications.AddAsync(entity);
+        await _context.Notifications.AddAsync(notification);
         await _context.SaveChangesAsync();
+        return notification;
     }
 
-    public async Task MarkNotificationAsSent(Notification notification)
+    public async Task<Notification?> GetByIdAsync(Guid id)
     {
-        notification.Status = "Sent";
-        _context.Notifications.Update(notification);
+        return await _context.Notifications.FirstOrDefaultAsync(n => n.Id == id);
+    }
+
+    public async Task CancelAsync(Guid id)
+    {
+        var toCancel = await _context.Notifications.FirstOrDefaultAsync(n => n.Id == id);
+
+        if (toCancel == null)
+        {
+            return;
+        }
+        toCancel.Status = NotificationStatus.Cancelled;
         await _context.SaveChangesAsync();
     }
 

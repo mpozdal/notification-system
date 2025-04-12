@@ -1,13 +1,12 @@
-using NotificationAPI.Models;
+using NotificationShared.Models;
 
 namespace NotificationAPI.Repositories;
 
 public interface INotificationRepository
 {
-    Task AddAsync(Notification notification);
-    Task MarkNotificationAsSent(Notification notification);
-    
-    
+    Task<Notification> AddAsync(Notification notification);
+    Task<Notification?> GetByIdAsync(Guid id);
+    Task CancelAsync(Guid id);
     Task BeginTransactionAsync();
     Task CommitTransactionAsync();
     Task RollbackTransactionAsync();
