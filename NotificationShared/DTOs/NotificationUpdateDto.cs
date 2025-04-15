@@ -6,5 +6,6 @@ public class NotificationUpdateDto
 {
     public Guid Id { get; init; }
     public DateTime? NewDatetime { get; init; }
-    public NotificationStatus? NewStatus { get; init; } = NotificationStatus.Cancelled;
+    public NotificationStatus? NewStatus { get; init; }
+    public Boolean? ForceToSend { get; init; }
 }

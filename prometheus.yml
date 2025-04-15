@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'api'
+    static_configs:
+      - targets: ['localhost:5008']
+
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['localhost:3306']
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['localhost:5433']
+        
+  - job_name: 'service'
+    static_configs:
+      - targets: [ 'localhost:5001' ]

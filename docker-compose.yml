@@ -14,6 +14,32 @@ services:
       - '3306:3306'
     volumes:
       - mysql_data:/var/lib/mysql
+  scheduler-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: scheduler
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: schedulerdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - scheduler-data:/var/lib/postgresql/data
+      
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -21,7 +47,7 @@ services:
     hostname: rabbitmq
     restart: always
     ports:
-      - '5672:5672'       # port do komunikacji z aplikacjami
+      - '5672:5672'       # komunikacja z app
       - '15672:15672'     # panel webowy
     environment:
       RABBITMQ_DEFAULT_USER: user
@@ -32,3 +58,4 @@ services:
 volumes:
   mysql_data:
   rabbitmq_data:
+  scheduler-data:

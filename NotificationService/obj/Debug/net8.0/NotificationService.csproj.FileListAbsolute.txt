@@ -25,13 +25,7 @@
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.Design.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.Relational.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.Relational.Design.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Caching.Abstractions.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Caching.Memory.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Configuration.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Configuration.Abstractions.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Configuration.Binder.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Configuration.CommandLine.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Configuration.EnvironmentVariables.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Configuration.FileExtensions.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Configuration.Json.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Configuration.UserSecrets.dll
@@ -40,12 +34,8 @@
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.DependencyModel.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Diagnostics.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Diagnostics.Abstractions.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.FileProviders.Abstractions.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.FileProviders.Physical.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.FileSystemGlobbing.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Hosting.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Hosting.Abstractions.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Http.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Logging.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Logging.Abstractions.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Logging.Configuration.dll
@@ -54,8 +44,6 @@
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Logging.EventLog.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Logging.EventSource.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Options.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Options.ConfigurationExtensions.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Microsoft.Extensions.Primitives.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Mono.TextTemplating.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Npgsql.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
@@ -67,7 +55,6 @@
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/System.Composition.Runtime.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/System.Composition.TypedParts.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/System.Diagnostics.EventLog.dll
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/System.IO.Pipelines.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/cs/Microsoft.CodeAnalysis.resources.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/de/Microsoft.CodeAnalysis.resources.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/es/Microsoft.CodeAnalysis.resources.dll
@@ -130,3 +117,5 @@
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/obj/Debug/net8.0/NotificationService.genruntimeconfig.cache
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/obj/Debug/net8.0/ref/NotificationService.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/obj/Debug/net8.0/NotificationService.csproj.CopyComplete
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Prometheus.NetStandard.dll
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationService/bin/Debug/net8.0/Prometheus.AspNetCore.dll

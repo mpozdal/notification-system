@@ -20,7 +20,7 @@ public class RabbitMqConsumer : BackgroundService
     private const string ExchangeName = "notification";
 
 
-    public RabbitMqConsumer(IConfiguration config, ILogger<RabbitMqConsumer> logger, IServiceProvider serviceProvider)
+    public RabbitMqConsumer( ILogger<RabbitMqConsumer> logger)
     {
         _logger = logger;
         var factory = new ConnectionFactory

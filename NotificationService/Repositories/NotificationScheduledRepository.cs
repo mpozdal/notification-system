@@ -65,11 +65,11 @@ public class NotificationScheduledRepository
             (n.ScheduledAtUtc < nowUtc && n.Status == NotificationStatus.Scheduled) || (n.ForceSend && n.Status == NotificationStatus.Scheduled)).ToListAsync();
     }
 
-    public async Task IncrementAttemptAsync(Guid notificationId)
+    public async Task ForceToSend(Guid notificationId)
     {
         var n = await _context.NotificationScheduled
             .FirstOrDefaultAsync(n => n.NotificationId == notificationId);
-        n.RetryCount += 1;
+        n.ForceSend = true;
         
         await _context.SaveChangesAsync();
     }

@@ -85,12 +85,34 @@ public class NotificationSender :  INotificationSender
         {
             await _repository.BeginTransactionAsync();
             await _repository.UpdateNotification(notification);
-            
-            var toCancel = new NotificationCanceledEvent()
+            if (notification.ForceToSend.HasValue)
             {
-                Id = notification.Id,
-            };
-            _publisher.PublishNotificationCanceled(toCancel);
+                var toForceSend = new NotificationForcedEvent()
+                {
+                    Id = notification.Id,
+                };
+                _publisher.PublishNotificationForcedToSend(toForceSend);
+            }
+            if (notification.NewDatetime.HasValue)
+            {
+                var toUpdate = new NotificationUpdatedEvent()
+                {
+                    Id = notification.Id,
+                    NewScheduledAt = notification.NewDatetime.Value,
+                };
+                _publisher.PublishNotificationRescheduled(toUpdate);
+            }
+
+            if (notification.NewStatus.HasValue)
+            {
+                var toCancel = new NotificationCanceledEvent()
+                {
+                    Id = notification.Id,
+                };
+                _publisher.PublishNotificationCanceled(toCancel);
+            }
+            
+            
             await _repository.CommitTransactionAsync();
             
         }

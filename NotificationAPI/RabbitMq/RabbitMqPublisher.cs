@@ -92,22 +92,35 @@ public class RabbitMQPublisher : IDisposable
         }
     }
 
-    public void PublishNotificationUpdated(NotificationUpdatedEvent notification)
+    public void PublishNotificationForcedToSend(NotificationForcedEvent notification)
+    {
+        PublishMessage(notification, "notification.forced");
+
+        if (_channel.WaitForConfirms(TimeSpan.FromSeconds(5)))
+        {
+            _logger.LogInformation("Force send event confirmed by RabbitMQ");
+        }
+        else
+        {
+            _logger.LogWarning("Force send event not confirmed by RabbitMQ");
+            throw new Exception("Broker confirmation timeout");
+        }
+    }
+    public void PublishNotificationRescheduled(NotificationUpdatedEvent notification)
     {
         PublishMessage(notification, "notification.updated");
 
         if (_channel.WaitForConfirms(TimeSpan.FromSeconds(5)))
         {
-            _logger.LogInformation("Update event confirmed by RabbitMQ");
+            _logger.LogInformation("Force send event confirmed by RabbitMQ");
         }
         else
         {
-            _logger.LogWarning("Update event not confirmed by RabbitMQ");
+            _logger.LogWarning("Force send event not confirmed by RabbitMQ");
             throw new Exception("Broker confirmation timeout");
         }
     }
-
-
+    
     public void Dispose()
     {
         if (_channel != null && _channel.IsOpen)

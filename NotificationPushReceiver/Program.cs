@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NotificationPushReceiver.Rabbitmq;
 using RabbitMQ.Client;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +19,19 @@ builder.Services.AddSingleton<IConnection>(sp =>
     return factory.CreateConnection();
 });
 
+
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddHostedService<RabbitMqConsumer>();
 
 var app = builder.Build();
+
+app.UseRouting();
+#pragma warning disable ASP0014
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapMetrics();
+});
+#pragma warning restore ASP0014
+
 
 app.Run();

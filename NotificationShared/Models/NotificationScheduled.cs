@@ -14,6 +14,6 @@ public class NotificationScheduled
     public NotificationStatus Status { get; set; }
     public int RetryCount { get; set; } = 0;
     public bool HighPriority { get; init; } = false;
-    public bool ForceSend { get; init; } = false;
+    public bool ForceSend { get; set; } = false;
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 }

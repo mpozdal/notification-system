@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using NotificationService.Http;
 using NotificationShared.Models;
 using NotificationService.Interfaces;
+using NotificationService.Metrics;
 using NotificationService.RabbitMq;
 using NotificationService.Repositories;
 using NotificationShared.Enums;
@@ -61,6 +62,7 @@ public class NotificationDispatcher : BackgroundService
                             Id = notification.NotificationId,
                             NewStatus = NotificationStatus.Sent
                         });
+                        NotificationMetrics.NotificationsSent.WithLabels(notification.Channel).Inc();
                         _logger.LogInformation("Notification {Id} dispatched successfully", notification.NotificationId);
                     }
                     else
@@ -74,10 +76,12 @@ public class NotificationDispatcher : BackgroundService
                                 Id = notification.NotificationId,
                                 NewStatus = NotificationStatus.Failed
                             });
+                            NotificationMetrics.NotificationsFailed.WithLabels(notification.Channel).Inc();
                             _logger.LogWarning("Notification {Id} marked as Failed after 3 attempts", notification.NotificationId);
                         }
                         else
                         {
+                            NotificationMetrics.PendingNotifications.WithLabels(notification.Channel).Inc();
                             _logger.LogWarning("Notification {Id} dispatch attempt failed", notification.NotificationId);
                         }
                     }

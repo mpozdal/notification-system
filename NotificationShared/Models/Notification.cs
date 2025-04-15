@@ -13,7 +13,7 @@ public class Notification
     public NotificationStatus Status { get; set; } = NotificationStatus.Pending;
     public int RetryCount { get; init; } = 0;
     public bool HighPriority { get; init; } = false;
-    public bool ForceSend { get; init; } = false;
+    public bool ForceSend { get; set; } = false;
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 }
 

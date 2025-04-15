@@ -47,6 +47,8 @@ public class NotificationRepository: INotificationRepository
         {
             return;
         }
+        if(notification.ForceToSend.HasValue)
+            toUpdate.ForceSend = true;
         if(notification.NewDatetime.HasValue)
             toUpdate.ScheduledAt = notification.NewDatetime.Value;
         if(notification.NewStatus.HasValue)

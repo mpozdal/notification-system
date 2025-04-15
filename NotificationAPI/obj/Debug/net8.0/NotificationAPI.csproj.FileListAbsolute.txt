@@ -111,4 +111,9 @@
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/bin/Debug/net8.0/NotificationShared
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/bin/Debug/net8.0/NotificationShared.dll
 /Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/bin/Debug/net8.0/NotificationShared.pdb
-/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/obj/Debug/net8.0/NotificationAPI.csproj.CopyComplete
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/bin/Debug/net8.0/Prometheus.NetStandard.dll
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/bin/Debug/net8.0/Prometheus.AspNetCore.dll
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/bin/Debug/net8.0/NotificationAPI.staticwebassets.endpoints.json
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/obj/Debug/net8.0/staticwebassets.build.endpoints.json
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/obj/Debug/net8.0/staticwebassets/msbuild.NotificationAPI.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+/Users/michalpozdal/Desktop/studia/mgr/1sem/ztp/NotificationSystem/NotificationAPI/obj/Debug/net8.0/Notifica.D86891B4.Up2Date

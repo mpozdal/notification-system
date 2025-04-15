@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using NotificationService;
 using NotificationService.Data;
@@ -6,9 +7,10 @@ using NotificationService.Interfaces;
 using NotificationService.RabbitMq;
 using NotificationService.Repositories;
 using NotificationService.Services;
+using Prometheus;
 using RabbitMQ.Client;
 
-var builder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IConnection>(sp => 
 {
@@ -36,5 +38,14 @@ builder.Services.AddScoped<NotificationScheduledRepository>();
 builder.Services.AddHostedService<NotificationDispatcher>();
 builder.Services.AddHostedService<RabbitMqConsumer>();
 
-var host = builder.Build();
-host.Run();
+var app = builder.Build();
+
+app.UseRouting();
+
+app.UseHttpMetrics();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapMetrics();
+});
+app.Run();

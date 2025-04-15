@@ -42,6 +42,7 @@ public class RabbitMqConsumer : BackgroundService
         _channel.QueueBind(QueueName, ExchangeName, "notification.created");
         _channel.QueueBind(QueueName, ExchangeName, "notification.canceled");
         _channel.QueueBind(QueueName, ExchangeName, "notification.updated");
+        _channel.QueueBind(QueueName, ExchangeName, "notification.forced");
 
         _logger.LogInformation("Connected to RabbitMQ");
     }

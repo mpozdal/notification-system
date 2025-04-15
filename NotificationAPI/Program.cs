@@ -3,7 +3,7 @@ using NotificationAPI.Data;
 using NotificationAPI.RabbitMq;
 using NotificationAPI.Repositories;
 using NotificationAPI.Services;
-
+using Prometheus;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -30,6 +30,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHttpMetrics();
+app.MapMetrics("/metrics");
 
 app.UseHttpsRedirection();
 app.MapControllers();

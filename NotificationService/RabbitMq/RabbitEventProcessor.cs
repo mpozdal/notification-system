@@ -60,6 +60,14 @@ public class RabbitEventProcessor : IRabbitEventProcesser
                         await HandleUpdatedAsync((NotificationUpdatedEvent)@event);
                     }
                     break;
+                case "notification.forced":
+                    @event = JsonSerializer.Deserialize<NotificationForcedEvent>(message);
+                    if (@event != null)
+                    {
+                        _logger.LogInformation("Processing updated notification: {Notification}", message);
+                        await HandleForcedToSendAsync((NotificationForcedEvent)@event);
+                    }
+                    break;
                 default:
                     _logger.LogWarning("Unknown routing key received: {RoutingKey}", routingKey);
                     break;
@@ -155,6 +163,24 @@ public class RabbitEventProcessor : IRabbitEventProcesser
         {
             await repository.RollbackTransactionAsync();
             _logger.LogError(ex, "Error while handling updated notification: {NotificationId}", @event.Id);
+            throw;
+        }
+    }
+
+    private async Task HandleForcedToSendAsync(NotificationForcedEvent @event)
+    {
+        await using var scope = _services.CreateAsyncScope();
+        var repository = scope.ServiceProvider.GetRequiredService<NotificationScheduledRepository>();
+        try
+        {
+            await repository.BeginTransactionAsync();
+            await repository.ForceToSend(@event.Id);
+            await repository.CommitTransactionAsync();
+            _logger.LogInformation("Adding forced notification to send: {NotificationId}", @event.Id);
+        }
+        catch (Exception ex)
+        {
+            await repository.RollbackTransactionAsync();
             throw;
         }
     }
